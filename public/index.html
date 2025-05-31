@@ -1,0 +1,70 @@
+<button onclick="sendSOS()" style="margin-bottom: 20px;">Send SOS</button>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Incident Reporting System</title>
+  <link rel="stylesheet" href="styles.css"> 
+</head>
+
+<h2>Report an Incident</h2>
+<form id="incidentForm">
+  <label for="type">Incident Type:</label><br>
+  <input type="text" id="type" name="type" required><br>
+
+  <label for="details">Incident Details:</label><br>
+  <textarea id="details" name="details" required></textarea><br>
+
+  <label for="severity">Severity:</label><br>
+  <select id="severity" name="severity">
+    <option value="Low">Low</option>
+    <option value="Medium">Medium</option>
+    <option value="High">High</option>
+  </select><br><br>
+
+  <button type="submit">Submit Incident</button>
+</form>
+
+<script>
+  document.getElementById('incidentForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // Try to capture user location if available
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const data = {
+        type: document.getElementById('type').value,
+        details: document.getElementById('details').value,
+        severity: document.getElementById('severity').value,
+        location: {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        }
+      };
+
+      const res = await fetch('http://localhost:5000/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      alert(result.msg || result.error);
+
+    }, async (error) => {
+      // Fallback: Submit without location if user blocks GPS
+      const data = {
+        type: document.getElementById('type').value,
+        details: document.getElementById('details').value,
+        severity: document.getElementById('severity').value
+      };
+
+      const res = await fetch('http://localhost:5000/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      alert(result.msg || result.error);
+    });
+  });
+</script>

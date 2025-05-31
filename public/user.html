@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile Form</title>
+  <link rel="stylesheet" href="styles.css"> <!-- Optional custom CSS -->
+</head>
+<body>
+
+  <h2>Create Your User Profile</h2>
+
+  <!-- ✅ DO NOT include action or rely on default POST -->
+  <form id="userForm" enctype="multipart/form-data" method="POST">
+    <label for="fullName">Full Name:</label><br>
+    <input type="text" name="fullName" id="fullName" required><br>
+
+    <label for="email">Email:</label><br>
+    <input type="email" name="email" id="email"><br>
+
+    <label for="phone">Phone Number:</label><br>
+    <input type="text" name="phone" id="phone" required><br>
+
+    <label for="address">Address:</label><br>
+    <textarea name="address" id="address"></textarea><br>
+
+    <h3>Emergency Contact</h3>
+    <label for="emergencyName">Name:</label><br>
+    <input type="text" name="emergencyName" id="emergencyName"><br>
+
+    <label for="emergencyRelation">Relation:</label><br>
+    <input type="text" name="emergencyRelation" id="emergencyRelation"><br>
+
+    <label for="emergencyPhone">Phone:</label><br>
+    <input type="text" name="emergencyPhone" id="emergencyPhone"><br>
+
+    <h3>Documents</h3>
+    <label for="idCard">Upload ID Card:</label><br>
+    <input type="file" name="idCard" id="idCard" accept=".pdf,.jpg,.jpeg,.png"><br><br>
+
+    <label for="insurance">Upload Insurance Document:</label><br>
+    <input type="file" name="insurance" id="insurance" accept=".pdf,.jpg,.jpeg,.png"><br><br>
+
+    <button type="submit">Submit Profile</button>
+  </form>
+
+  <script>
+    document.getElementById('userForm').addEventListener('submit', async function (e) {
+      e.preventDefault(); // prevent page reload
+
+      const form = document.getElementById('userForm');
+      const formData = new FormData(form); // grab all form data including files
+
+      try {
+        const res = await fetch('http://localhost:5000/user', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          alert(result.msg || 'Profile submitted successfully!');
+          form.reset();
+        } else {
+          alert(result.error || 'An error occurred while submitting the form.');
+        }
+      } catch (error) {
+        console.error('Submit error:', error);
+        alert('Something went wrong. Please try again later.');
+      }
+    });
+  </script>
+
+</body>
+</html>
