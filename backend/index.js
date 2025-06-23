@@ -26,9 +26,12 @@ const reportRoute = require('./routes/report');
 app.use('/sos', sosRoute);       // SOS API — sends SMS and stores real-time alerts
 app.use('/report', reportRoute); // Incident form submission API
 
-// ✅ Default API status route
+// ✅ Default API status route 
 app.get('/', (req, res) => res.send('Incident Reporting API Running'));
 
 // ✅ Start the server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+const authorityRoute = require('./routes/report');
+app.use('/api/report', authorityRoute);
